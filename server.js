@@ -5,7 +5,9 @@ const MongoClient = require('mongodb').MongoClient;
 const ObjectID = require('mongodb').ObjectID;
 
 const app = express();
+
 const jsonParser = bodyParser.json();
+app.use(bodyParser.json());
 
 app.use(express.static('public'));
 
@@ -106,6 +108,7 @@ app.post('/id', jsonParser, onCreateDiary);
 */
 
 async function upsertEntry(req, res){
+  //console.log(req.body);
     const collection = db.collection('diaries');
     const diaryId = req.params.diaryId;
     const entries = req.params.entries;
@@ -121,7 +124,6 @@ async function upsertEntry(req, res){
     }
     const response = await collection.update(query, newEntry, params);
     res.json(response);
-
 }
 app.post('/ups/', upsertEntry);
 
@@ -130,8 +132,10 @@ async function onGetDiary(req, res) {
   const diaryId = req.params.diaryId;
   const collection = db.collection('diaries');
   const response = await collection.findOne({ _id: ObjectID(diaryId) });
+  //const textResponse = HttpResponse(response, mimetype="text/html");
   res.json(response);
   //res.render('diaries', {entries: response.entries});
+  console.log(res);
 
 }
 app.get('/id/:diaryId', onGetDiary);
